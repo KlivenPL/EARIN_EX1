@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionMinimization", "FunctionMinimization\FunctionMinimization.csproj", "{29B31AC0-A34D-461B-B3CC-FCB9E2CE0149}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionMinimizationTests", "FunctionMinimizationTests\FunctionMinimizationTests.csproj", "{022597AD-8B52-4977-B86D-47D8933674CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29B31AC0-A34D-461B-B3CC-FCB9E2CE0149}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{29B31AC0-A34D-461B-B3CC-FCB9E2CE0149}.Debug|Any CPU.Build.0 = Debug|x64
+		{29B31AC0-A34D-461B-B3CC-FCB9E2CE0149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29B31AC0-A34D-461B-B3CC-FCB9E2CE0149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{022597AD-8B52-4977-B86D-47D8933674CA}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{022597AD-8B52-4977-B86D-47D8933674CA}.Debug|Any CPU.Build.0 = Debug|x64
+		{022597AD-8B52-4977-B86D-47D8933674CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{022597AD-8B52-4977-B86D-47D8933674CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49C16986-1DE0-4F1F-9644-B440E24D75A3}
+	EndGlobalSection
+EndGlobal
