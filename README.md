@@ -8,6 +8,8 @@ Politechnika Warszawska, 03.2021
 1. Download release package or build project yourself
 1. Release package supports Windows machines
 1. Be sure, that decimal separator is set to "." (dot) in Windows Control Panel
+## Build
+Build using newest version of Visual Studio 2019 (16.9.0) and .Net Core 3.0
 ## Settings
 #### appsettings.json
 ```json
@@ -20,8 +22,6 @@ Politechnika Warszawska, 03.2021
 ```
 * `MaxExecutionTimeInMs` is used to set calculations timeout (in miliseconds),
 * `DesiredPrecision` is used to specify desired precision that algorithm will try to reach.
-## Build
-Build using newest version of Visual Studio 2019 (16.9.0) and .Net Core 3.0
 ## Usage
 ### Interactive mode
 Run application (using command line) to run it in interactive mode, like:
