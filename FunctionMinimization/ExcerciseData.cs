@@ -11,12 +11,17 @@ namespace FunctionMinimization
         public ExcerciseData(UserInput userInput)
         {
             this.userInput = userInput;
-            bTranspose = userInput.B.transpose(0);
+            bTranspose = np.transpose(new[] { userInput.B });
         }
 
         public double JFunction(NDarray x)
         {
-            var func = userInput.C + bTranspose * x + x.transpose() * userInput.A * x;
+            var xTranspose = np.transpose(new[] { x });
+            var bTx = np.dot(x, bTranspose);
+            var xTA = np.dot(userInput.A, xTranspose);
+            var xTAx = np.dot(x, xTA);
+
+            var func = userInput.C + bTx + xTAx;
             return (double)func;
         }
     }

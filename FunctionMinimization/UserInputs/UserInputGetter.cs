@@ -9,15 +9,16 @@ namespace FunctionMinimization.UserInputs
     {
         private readonly Random random = new Random();
 
-        private const string MethodTypeDescription = "Enter method type, like \"SimpleGradient\" or \"Newtons\"";
-        private const string BatchModeDescription = "Enter batch mode, like \"true\" or \"false\"";
-        private const string CDescription = "Enter C, like \"1.234\" or \"911\"";
-        private const string BDescription = "Enter B, like \"1.1, 2, 3.5, 4, 5\"";
-        private const string ADescription = "Enter A, like \"1, 0; 0, 1\"";
-        private const string LDescription = "Enter l, like \"1.234\" or \"911\"";
-        private const string UDescription = "Enter u, like \"1.234\" or \"911\". Should be greater than l.";
-        private const string X0Description = "Enter X0, like \"1.1, 2, 3.5, 4, 5\"";
-        private const string X0HasToBeGeneratedDescription = "Specify if X0 has to be generated from [l, u], by typing: \"true\" or \"false\".";
+        private string MethodTypeDescription => $"Enter method type: {string.Join(", ", Enum.GetNames(typeof(MinimizationMethodType)))}";
+        private const string BetaDescription = "Enter beta, like 0.01 or 1";
+        private const string CDescription = "Enter C, like 1.23 or 911";
+        private const string BDescription = "Enter B, like 1.1, 2, 3.5, 4, 5";
+        private const string ADescription = "Enter A, like 1, 0; 0, 1";
+        private const string LDescription = "Enter l, like 1.23 or 911";
+        private const string UDescription = "Enter u, like 1.23 or 911. Should be greater than l";
+        private const string X0Description = "Enter X0, like 1.1, 2, 3.5, 4, 5";
+        private const string X0HasToBeGeneratedDescription = "Specify if X0 has to be generated from [l, u], by typing: true or false";
+        private const string BatchModeDescription = "Enter n for batch mode (press enter for non-batch mode)";
 
         public UserInput ParseUserInput(params string[] args)
         {
@@ -30,14 +31,19 @@ namespace FunctionMinimization.UserInputs
             {
                 6 => ParseUserInputWithX0Given(args),
                 7 => ParseUserInputWithX0Generated(args),
-                _ => throw Error($"Invalid parameters. Should be either{Environment.NewLine}<MethodType> <BatchMode> <C> <B> <A> <X0>{Environment.NewLine}or{Environment.NewLine}<MethodType> <BatchMode> <C> <B> <A> <l> <u>"),
+                _ => throw Error($"Invalid parameters. Should be either{Environment.NewLine}<MethodType> <C> <B> <A> <X0> <n>{Environment.NewLine}or{Environment.NewLine}<MethodType> <C> <B> <A> <l> <u> <n>"),
             };
         }
 
         private UserInput GetUserInput()
         {
             var methodType = TryGetInput(MethodTypeDescription, ParseMethodType);
-            var batchMode = TryGetInput(BatchModeDescription, ParseBatchMode);
+
+            double? beta = null;
+            if (methodType == MinimizationMethodType.SimpleGradient || methodType == MinimizationMethodType.SimpleGradientNum)
+            {
+                beta = TryGetInput(BetaDescription, ParseBeta);
+            }
 
             var C = TryGetInput(CDescription, ParseC);
             var B = TryGetInput(BDescription, ParseB);
@@ -59,10 +65,12 @@ namespace FunctionMinimization.UserInputs
                 X0 = TryGetInput(X0Description, ParseX0);
             }
 
+            var batchModeN = TryGetInput(BatchModeDescription, ParseBatchModeN);
+
             return new UserInput
             {
                 MinimizationMethodType = methodType,
-                BatchMode = batchMode,
+                BatchModeN = batchModeN,
                 C = C,
                 B = B,
                 A = A,
@@ -98,7 +106,12 @@ namespace FunctionMinimization.UserInputs
             int n = 0;
 
             var methodType = ParseMethodType(args[n++]);
-            var batchMode = ParseBatchMode(args[n++]);
+
+            double? beta = null;
+            if (methodType == MinimizationMethodType.SimpleGradient || methodType == MinimizationMethodType.SimpleGradientNum)
+            {
+                beta = ParseBeta(args[n++]);
+            }
 
             var C = ParseC(args[n++]);
             var B = ParseB(args[n++]);
@@ -109,10 +122,13 @@ namespace FunctionMinimization.UserInputs
 
             var X0 = GenerateX0(B.size, l, u);
 
+            var batchModeN = ParseBatchModeN(args[n++]);
+
             return new UserInput
             {
                 MinimizationMethodType = methodType,
-                BatchMode = batchMode,
+                BatchModeN = batchModeN,
+                Beta = beta,
                 C = C,
                 B = B,
                 A = A,
@@ -125,7 +141,12 @@ namespace FunctionMinimization.UserInputs
             int n = 0;
 
             var methodType = ParseMethodType(args[n++]);
-            var batchMode = ParseBatchMode(args[n++]);
+
+            double? beta = null;
+            if (methodType == MinimizationMethodType.SimpleGradient || methodType == MinimizationMethodType.SimpleGradientNum)
+            {
+                beta = ParseBeta(args[n++]);
+            }
 
             var C = ParseC(args[n++]);
             var B = ParseB(args[n++]);
@@ -133,10 +154,13 @@ namespace FunctionMinimization.UserInputs
 
             var X0 = ParseX0(args[n++]);
 
+            var batchMode = ParseBatchModeN(args[n++]);
+
             return new UserInput
             {
                 MinimizationMethodType = methodType,
-                BatchMode = batchMode,
+                BatchModeN = batchMode,
+                Beta = beta,
                 C = C,
                 B = B,
                 A = A,
@@ -164,14 +188,24 @@ namespace FunctionMinimization.UserInputs
             throw Error($"Invalid minimization method type was given: {str}. Method type should be one of following: \"Newtons\" or \"SimpleGradient\".");
         }
 
-        private bool ParseBatchMode(string str)
+        private int ParseBatchModeN(string str)
         {
-            if (bool.TryParse(str, out bool batchMode))
+            if (int.TryParse(str, out int batchMode))
             {
                 return batchMode;
             }
 
-            throw Error($"Invalid batch mode was given: {str}. Batch mode should be one of following: \"true\" or \"false\".");
+            return 1;
+        }
+
+        private double ParseBeta(string str)
+        {
+            if (double.TryParse(str, out double beta) && beta > 0)
+            {
+                return beta;
+            }
+
+            throw Error($"Invalid beta was given: {str}. Beta should be a positive double-precision floating point number.");
         }
 
         private double ParseC(string str)
@@ -258,7 +292,7 @@ namespace FunctionMinimization.UserInputs
 
         private NDarray Parse1DArray(string str)
         {
-            var ndArray = np.fromstring(str, sep: ",");
+            var ndArray = (NDarray)str.Split(',').Select(n => double.Parse(n)).ToArray();
             return ndArray;
         }
 

@@ -1,8 +1,9 @@
+using FunctionMinimization;
+using FunctionMinimization.Minimization.Newton;
+using FunctionMinimization.UserInputs;
+using Numpy;
 using System;
 using Xunit;
-using FunctionMinimization.UserInputs;
-using FunctionMinimization.Minimization.Newton;
-using FunctionMinimization;
 
 namespace FunctionMinimizationTests
 {
@@ -16,16 +17,46 @@ namespace FunctionMinimizationTests
             userInputGetter = new UserInputGetter();
         }
 
-        [Fact]
-        public void SampleNewtonsMethodTest1()
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(0, 1)]
+        [InlineData(1, 0)]
+        [InlineData(50, 50)]
+        [InlineData(-50, 50)]
+        [InlineData(50, -50)]
+        [InlineData(-50, -50)]
+        public void SampleNewtonsMethodNumTest(double startX, double startY)
         {
-            var data = "Newtons false 10.0 1.0,2.0 1.0,0.0;0.0,1.0 -5.0 5.0";
-            var userInput = userInputGetter.ParseUserInput(data.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+            var data = $"NewtonsNum 1.0 1.0,0.0 1.0,0.0;0.0,1.0 {startX},{startY} -1";
+            var userInput = ParseAndValidateInput(data);
+
+            var result = new NewtonsMethodNumeric().Minimize(new ExcerciseData(userInput).JFunction, userInput.X0);
+
+            Assert.True(CheckIfResultInDeltaRange(result.XStar, np.array(new[] { -0.5, 0 }), 0.001));
+        }
+
+        [Fact]
+        public void SampleNewtonsMethodTaskTest()
+        {
+            var data = "Newtons false 1.0 1.0,0.0 1.0,0.0;0.0,1.0 100.0,-50.0";
+            var userInput = ParseAndValidateInput(data);
+
+            var result = new NewtonsMethodTask(userInput).Minimize(new ExcerciseData(userInput).JFunction, userInput.X0);
+
+            Assert.True(CheckIfResultInDeltaRange(result.XStar, np.array(new[] { -0.5, 0 }), 0.001));
+        }
+
+        private UserInput ParseAndValidateInput(string str)
+        {
+            var userInput = userInputGetter.ParseUserInput(str.Split(' ', StringSplitOptions.RemoveEmptyEntries));
             new UserInputValidator(userInput).Validate();
 
-            var result = new NewtonsMethod().Minimize(new ExcerciseData(userInput).JFunction, userInput.X0);
+            return userInput;
+        }
 
-            var x = 1;
+        private bool CheckIfResultInDeltaRange(NDarray result, NDarray expectedResult, double deltaRange)
+        {
+            return np.all(np.abs(result - expectedResult) <= deltaRange);
         }
     }
 }
