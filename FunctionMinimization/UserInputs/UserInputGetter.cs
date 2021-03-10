@@ -7,8 +7,6 @@ namespace FunctionMinimization.UserInputs
 {
     public class UserInputGetter
     {
-        private readonly Random random = new Random();
-
         private string MethodTypeDescription => $"Enter method type: {string.Join(", ", Enum.GetNames(typeof(MinimizationMethodType)))}";
         private const string BetaDescription = "Enter beta, like 0.01 or 1";
         private const string CDescription = "Enter C, like 1.23 or 911";
@@ -18,6 +16,7 @@ namespace FunctionMinimization.UserInputs
         private const string UDescription = "Enter u, like 1.23 or 911. Should be greater than l";
         private const string X0Description = "Enter X0, like 1.1, 2, 3.5, 4, 5";
         private const string X0HasToBeGeneratedDescription = "Specify if X0 has to be generated from [l, u], by typing: true or false";
+        private const string DesiredJofXDescription = "Enter desired J(X) value to reach";
         private const string BatchModeDescription = "Enter n for batch mode (press enter for non-batch mode)";
 
         public UserInput ParseUserInput(params string[] args)
@@ -27,12 +26,14 @@ namespace FunctionMinimization.UserInputs
                 return GetUserInput();
             }
 
-            return args.Length switch
+            if (args.Length >= 7)
             {
-                6 => ParseUserInputWithX0Given(args),
-                7 => ParseUserInputWithX0Generated(args),
-                _ => throw Error($"Invalid parameters. Should be either{Environment.NewLine}<MethodType> <C> <B> <A> <X0> <n>{Environment.NewLine}or{Environment.NewLine}<MethodType> <C> <B> <A> <l> <u> <n>"),
-            };
+                return ParseUserInputFromArgs(args);
+            }
+            else
+            {
+                throw Error($"Invalid parameters. Should be either{Environment.NewLine}<MethodType> [beta (if grad. descent)] <C> <B> <A> <X0> <desired J(X)> <n>{Environment.NewLine}or{Environment.NewLine}<MethodType> [beta (if grad. descent)] <C> <B> <A> <l> <u> <desired J(X)> <n>");
+            }
         }
 
         private UserInput GetUserInput()
@@ -52,19 +53,19 @@ namespace FunctionMinimization.UserInputs
             var generateX0 = TryGetInput(X0HasToBeGeneratedDescription, ParseIfX0HasToBeGenerated);
 
             NDarray X0 = null;
+            double? l = null, u = null;
 
             if (generateX0)
             {
-                var l = TryGetInput(LDescription, ParseL);
-                var u = TryGetInput(UDescription, (str) => ParseU(str, l));
-
-                X0 = GenerateX0(B.size, l, u);
+                l = TryGetInput(LDescription, ParseL);
+                u = TryGetInput(UDescription, (str) => ParseU(str, l.Value));
             }
             else
             {
                 X0 = TryGetInput(X0Description, ParseX0);
             }
 
+            var desiredJofX = TryGetInput(DesiredJofXDescription, ParseDesiredJOfX);
             var batchModeN = TryGetInput(BatchModeDescription, ParseBatchModeN);
 
             return new UserInput
@@ -75,7 +76,10 @@ namespace FunctionMinimization.UserInputs
                 C = C,
                 B = B,
                 A = A,
-                X0 = X0
+                X0 = X0,
+                DesiredJOfX = desiredJofX,
+                L = l,
+                U = u
             };
         }
 
@@ -102,7 +106,7 @@ namespace FunctionMinimization.UserInputs
             }
         }
 
-        private UserInput ParseUserInputWithX0Generated(string[] args)
+        private UserInput ParseUserInputFromArgs(string[] args)
         {
             int n = 0;
 
@@ -118,42 +122,33 @@ namespace FunctionMinimization.UserInputs
             var B = ParseB(args[n++]);
             var A = ParseA(args[n++]);
 
-            var l = ParseL(args[n++]);
-            var u = ParseU(args[n++], l);
+            NDarray X0 = null;
 
-            var X0 = GenerateX0(B.size, l, u);
+            int argsCountForLU = 0, argsCountForX0 = 0;
+            double? l = null, u = null;
 
-            var batchModeN = ParseBatchModeN(args[n++]);
-
-            return new UserInput
-            {
-                MinimizationMethodType = methodType,
-                BatchModeN = batchModeN,
-                Beta = beta,
-                C = C,
-                B = B,
-                A = A,
-                X0 = X0
-            };
-        }
-
-        private UserInput ParseUserInputWithX0Given(string[] args)
-        {
-            int n = 0;
-
-            var methodType = ParseMethodType(args[n++]);
-
-            double? beta = null;
             if (methodType == MinimizationMethodType.SimpleGradient || methodType == MinimizationMethodType.SimpleGradientNum)
             {
-                beta = ParseBeta(args[n++]);
+                argsCountForLU = 9;
+                argsCountForX0 = 8;
+            }
+            else
+            {
+                argsCountForLU = 8;
+                argsCountForX0 = 7;
             }
 
-            var C = ParseC(args[n++]);
-            var B = ParseB(args[n++]);
-            var A = ParseA(args[n++]);
+            if (args.Length == argsCountForX0)
+            {
+                X0 = ParseX0(args[n++]);
+            }
+            else if (args.Length == argsCountForLU)
+            {
+                l = ParseL(args[n++]);
+                u = ParseU(args[n++], l.Value);
+            }
 
-            var X0 = ParseX0(args[n++]);
+            var desiredJofX = ParseDesiredJOfX(args[n++]);
 
             var batchMode = ParseBatchModeN(args[n++]);
 
@@ -165,7 +160,10 @@ namespace FunctionMinimization.UserInputs
                 C = C,
                 B = B,
                 A = A,
-                X0 = X0
+                X0 = X0,
+                DesiredJOfX = desiredJofX,
+                L = l,
+                U = u,
             };
         }
 
@@ -207,6 +205,16 @@ namespace FunctionMinimization.UserInputs
             }
 
             throw Error($"Invalid beta was given: {str}. Beta should be a positive double-precision floating point number.");
+        }
+
+        private double ParseDesiredJOfX(string str)
+        {
+            if (double.TryParse(str, out double desiredJOfX))
+            {
+                return desiredJOfX;
+            }
+
+            throw Error($"Invalid desired J(X) values: {str}. Desired J(X) should be a double-precision floating point number.");
         }
 
         private double ParseC(string str)
@@ -270,13 +278,6 @@ namespace FunctionMinimization.UserInputs
             }
 
             throw Error($"Invalid u was given: {str}. U should be double-precision floating point number, like -4 or 7.53, and should be greater or equal to l={l}");
-        }
-
-        private NDarray GenerateX0(int d, double l, double u)
-        {
-            var arr = np.zeros(d);
-            Enumerable.Range(0, d).Select(i => arr[i] = (NDarray)random.NextDouble() * (u - l) + l);
-            return arr;
         }
 
         private NDarray ParseX0(string str)

@@ -18,15 +18,17 @@ namespace FunctionMinimization.Minimization.Newton
         {
             NDarray x = np.copy(x0);
 
-            for (int t = 0; t < 1; t++)
+            bool success = Execute(() =>
             {
                 x -= np.dot(Gradient.GradientTask(userInput, x), Gradient.Gradient2ndOrderTaskUserInput(userInput));
-            }
+                return function(x);
+            }, userInput.DesiredJOfX);
 
             var result = new MinimizationMethodResult
             {
                 XStar = x,
                 JofXStar = function(x),
+                Timeout = !success,
             };
 
             return result;

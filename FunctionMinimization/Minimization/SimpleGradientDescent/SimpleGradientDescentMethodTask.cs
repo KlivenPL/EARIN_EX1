@@ -21,15 +21,17 @@ namespace FunctionMinimization.Minimization.SimpleGradientDescent
         {
             NDarray x = np.copy(x0);
 
-            for (int t = 0; t < 500; t++)
+            bool success = Execute(() =>
             {
                 x -= np.dot(Gradient.GradientTask(userInput, x), (NDarray)beta);
-            }
+                return function(x);
+            }, userInput.DesiredJOfX);
 
             var result = new MinimizationMethodResult
             {
                 XStar = x,
                 JofXStar = function(x),
+                Timeout = !success,
             };
 
             return result;
