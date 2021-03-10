@@ -5,7 +5,7 @@ Created in C# by Oskar Hącel & Marcin Lisowski
 Politechnika Warszawska, 03.2021
 
 ## Preparation
-1. Download release package or build project yourself
+1. Download release package here /releases/latest or build project yourself
 1. Release package supports Windows machines
 1. Be sure, that decimal separator is set to "." (dot) in Windows Control Panel
 ## Build
