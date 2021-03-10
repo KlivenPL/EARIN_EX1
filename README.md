@@ -13,7 +13,7 @@ Politechnika Warszawska, 03.2021
 ```json
 {
   "Settings": {
-    "MaxExecutionTimeInMs": 5000,
+    "MaxExecutionTimeInMs": 10000,
     "DesiredPrecision": 0.001
   }
 }
