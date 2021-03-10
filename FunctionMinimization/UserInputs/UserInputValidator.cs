@@ -1,5 +1,4 @@
 ﻿using Numpy;
-using System;
 
 namespace FunctionMinimization.UserInputs
 {
@@ -14,20 +13,10 @@ namespace FunctionMinimization.UserInputs
 
         public void Validate()
         {
-            try
-            {
-                ValidateIsBVector();
-                ValidateAMatrixSize();
-                ValidateIfAIsPositiveDefinite();
-                ValidateX0Size();
-            }
-            catch (UserInputException ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.ResetColor();
-                Console.ReadKey();
-            }
+            ValidateIsBVector();
+            ValidateAMatrixSize();
+            ValidateIfAIsPositiveDefinite();
+            ValidateX0Size();
         }
 
         private void ValidateIsBVector()
