@@ -32,7 +32,15 @@ namespace FunctionMinimization.UserInputs
             }
             else
             {
-                throw Error($"Invalid parameters. Should be either{Environment.NewLine}<MethodType> [beta (if grad. descent)] <C> <B> <A> <X0> <desired J(X)> <n>{Environment.NewLine}or{Environment.NewLine}<MethodType> [beta (if grad. descent)] <C> <B> <A> <l> <u> <desired J(X)> <n>");
+                throw Error(
+                    $"Invalid parameters. Should be either{Environment.NewLine}" +
+                    $"<MethodType> [beta (if grad. descent)] <C> <B> <A> <X0> <desired J(X)> <n>" +
+                    $"{Environment.NewLine}or{Environment.NewLine}" +
+                    $"<MethodType> [beta (if grad. descent)] <C> <B> <A> <l> <u> <desired J(X)> <n>" +
+                    $"{Environment.NewLine}Examples:{Environment.NewLine}" +
+                    $"FunctionMinimization NewtonsNum 1.0 1.0,0.0 1.0,0.0;0.0,1.0 -50,50 0.75 1{Environment.NewLine}" +
+                    $"FunctionMinimization SimpleGradient 0.01 1.0 1.0,0.0 1.0,0.0;0.0,1.0 -100 100 0.75 10"
+                );
             }
         }
 
@@ -189,7 +197,7 @@ namespace FunctionMinimization.UserInputs
 
         private int ParseBatchModeN(string str)
         {
-            if (int.TryParse(str, out int batchMode))
+            if (int.TryParse(str, out int batchMode) && batchMode > 1)
             {
                 return batchMode;
             }

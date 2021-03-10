@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
 
 namespace FunctionMinimization
 {
@@ -12,7 +14,7 @@ namespace FunctionMinimization
         static AppConfig()
         {
             Configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile(Path.GetFullPath(@$"{Environment.CurrentDirectory}\\appsettings.json"), optional: false, reloadOnChange: true)
                 .Build();
         }
 

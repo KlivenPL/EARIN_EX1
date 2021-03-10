@@ -56,13 +56,45 @@ namespace FunctionMinimization
 
         private UserInput GetUserInput(string[] args)
         {
-            return userInputGetter.ParseUserInput(args);
+            try
+            {
+                return userInputGetter.ParseUserInput(args);
+            }
+            catch (UserInputException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Input error:");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("Press any key to exit");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ReadKey();
+                Environment.Exit(0x1);
+            }
+
+            return null;
         }
 
         private void ValidateUserInput(UserInput userInput)
         {
-            var userInputValidator = new UserInputValidator(userInput);
-            userInputValidator.Validate();
+            try
+            {
+                var userInputValidator = new UserInputValidator(userInput);
+                userInputValidator.Validate();
+            }
+            catch (UserInputException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Validation error:");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("Press any key to exit");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ReadKey();
+                Environment.Exit(0x2);
+            }
         }
 
         private MinimizationMethod MapMinimizationMethod(UserInput userInput)

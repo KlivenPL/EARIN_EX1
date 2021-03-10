@@ -55,7 +55,7 @@ namespace FunctionMinimization.Helpers
             return np.add(np.dot(userInput.A.T + userInput.A, X0), userInput.B);
         }
 
-        public static NDarray Gradient2ndOrderTaskUserInput(UserInput userInput)
+        public static NDarray Gradient2ndOrderTask(UserInput userInput)
         {
             return np.linalg.inv(np.add(userInput.A, userInput.A.T));
         }

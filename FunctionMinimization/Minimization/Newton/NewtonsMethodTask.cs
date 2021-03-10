@@ -20,7 +20,7 @@ namespace FunctionMinimization.Minimization.Newton
 
             bool success = Execute(() =>
             {
-                x -= np.dot(Gradient.GradientTask(userInput, x), Gradient.Gradient2ndOrderTaskUserInput(userInput));
+                x -= np.dot(Gradient.GradientTask(userInput, x), Gradient.Gradient2ndOrderTask(userInput));
                 return function(x);
             }, userInput.DesiredJOfX);
 
