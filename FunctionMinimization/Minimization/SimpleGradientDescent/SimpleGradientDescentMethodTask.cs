@@ -9,8 +9,7 @@ namespace FunctionMinimization.Minimization.SimpleGradientDescent
     {
         public SimpleGradientDescentMethodTask(UserInput userInput)
         {
-            //this.beta = beta;
-            this.beta = 0.01;
+            this.beta = userInput.Beta.Value;
             this.userInput = userInput;
         }
 
@@ -24,7 +23,7 @@ namespace FunctionMinimization.Minimization.SimpleGradientDescent
 
             for (int t = 0; t < 500; t++)
             {
-                x -= np.dot(Gradient.GradientTask(userInput), (NDarray)beta);
+                x -= np.dot(Gradient.GradientTask(userInput, x), (NDarray)beta);
             }
 
             var result = new MinimizationMethodResult

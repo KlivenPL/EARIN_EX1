@@ -50,9 +50,9 @@ namespace FunctionMinimization.Helpers
             return gradient2ndOrder;
         }
 
-        public static NDarray GradientTask(UserInput userInput)
+        public static NDarray GradientTask(UserInput userInput, NDarray X0)
         {
-            return np.add(np.dot(userInput.A.T + userInput.A, userInput.X0), userInput.B);
+            return np.add(np.dot(userInput.A.T + userInput.A, X0), userInput.B);
         }
 
         public static NDarray Gradient2ndOrderTaskUserInput(UserInput userInput)

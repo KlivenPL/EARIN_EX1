@@ -18,9 +18,9 @@ namespace FunctionMinimization.Minimization.Newton
         {
             NDarray x = np.copy(x0);
 
-            for (int t = 0; t < 100; t++)
+            for (int t = 0; t < 1; t++)
             {
-                x -= np.dot(Gradient.GradientTask(userInput), Gradient.Gradient2ndOrderTaskUserInput(userInput));
+                x -= np.dot(Gradient.GradientTask(userInput, x), Gradient.Gradient2ndOrderTaskUserInput(userInput));
             }
 
             var result = new MinimizationMethodResult

@@ -71,6 +71,7 @@ namespace FunctionMinimization.UserInputs
             {
                 MinimizationMethodType = methodType,
                 BatchModeN = batchModeN,
+                Beta = beta,
                 C = C,
                 B = B,
                 A = A,
