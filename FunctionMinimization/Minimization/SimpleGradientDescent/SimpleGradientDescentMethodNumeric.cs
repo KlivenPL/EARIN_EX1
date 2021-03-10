@@ -1,7 +1,6 @@
 ﻿using FunctionMinimization.Helpers;
 using Numpy;
 using System;
-using System.Diagnostics;
 
 namespace FunctionMinimization.Minimization.SimpleGradientDescent
 {
@@ -18,20 +17,10 @@ namespace FunctionMinimization.Minimization.SimpleGradientDescent
         {
             NDarray x = np.copy(x0);
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
             for (int t = 0; t < 500; t++)
             {
-                if (sw.ElapsedMilliseconds > 10000)
-                {
-                    break;
-                }
-
                 x -= beta * Gradient.CalculateGradientNum(function, x, 0.00001);
             }
-
-            sw.Stop();
 
             var result = new MinimizationMethodResult
             {

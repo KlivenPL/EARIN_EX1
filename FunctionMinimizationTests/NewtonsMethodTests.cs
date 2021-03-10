@@ -35,10 +35,11 @@ namespace FunctionMinimizationTests
             Assert.True(CheckIfResultInDeltaRange(result.XStar, np.array(new[] { -0.5, 0 }), 0.001));
         }
 
-        [Fact]
-        public void SampleNewtonsMethodTaskTest()
+        [Theory]
+        [InlineData(50, -50)]
+        public void SampleNewtonsMethodTaskTest(double startX, double startY)
         {
-            var data = "Newtons false 1.0 1.0,0.0 1.0,0.0;0.0,1.0 100.0,-50.0";
+            var data = $"Newtons 1.0 1.0,0.0 1.0,0.0;0.0,1.0 {startX},{startY} -1";
             var userInput = ParseAndValidateInput(data);
 
             var result = new NewtonsMethodTask(userInput).Minimize(new ExcerciseData(userInput).JFunction, userInput.X0);
