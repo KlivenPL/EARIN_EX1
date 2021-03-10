@@ -1,6 +1,6 @@
 # EARIN EX1
-Optimization program, used to minimize a function.
-Created in C# by Oskar Hącel & Marcin Lisowski
+Optimization program, used to minimize a function. 
+Created in C# by Oskar Hącel & Marcin Lisowski 
 Politechnika Warszawska, 03.2021
 
 ## Preparation
